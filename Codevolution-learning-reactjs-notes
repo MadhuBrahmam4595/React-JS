@@ -257,7 +257,300 @@ class ClassClick extends Component {
 }
 export default ClassClick
 
-  
+BINDING EVENT HANDLERS
+======================
+
+import React, { Component, useState } from 'react'
+class EventBind extends Component {
+constructor(props) {
+  super(props)
+  this.state = {
+     message: 'Hello user'
+  }
+  //this.eventhandler = this.eventhandler.bind(this)
+}
+//eventhandler(){
+  //  this.setState({
+    //    message: 'good bye user'  
+    //})
+    //console.log('dfasdf');
+//}
+eventhandler = () =>{
+    this.setState({
+        message: 'Good bye!'
+    })
+}
+  render() {
+    return (
+      <div>
+        <div>{this.state.message}</div>
+        {/*<button onClick={this.eventhandler.bind(this)}>Click</button>*/}
+        {/*<button onClick={()=> this.eventhandler()}>Click</button>*/}
+        <button onClick={this.eventhandler}>Click</button>
+      </div>
+    )
+  }
+}
+export default EventBind
+
+METHOD AS PROPS
+===============
+import React, { Component } from 'react'
+import ChildComponent from './ChildComponent'
+class ParentComponent extends Component {
+    constructor(props) {
+      super(props)
+      this.state = {
+         parentName: 'Parent'
+      }
+      this.greetParent = this.greetParent.bind(this)
+    }
+    //greetParent(){
+       // alert(`Hello ${this.state.parentName}`)
+    //}
+    greetParent(childName){
+        alert(`Hello ${this.state.parentName} from ${childName}`)
+    }
+  render() {
+    return (
+      <div>
+        <ChildComponent greetHandler={this.greetParent}/>
+      </div>
+    )
+  }
+}
+export default ParentComponent
+
+import React from 'react'
+function ChildComponent(props) {
+  return (
+    <div>
+     {/* <div><button onClick={props.greetHandler}>Greet Parent</button></div> */}
+     <div><button onClick={()=>props.greetHandler('Child')}>Greet Parent</button></div>
+    </div>
+  )
+}
+export default ChildComponent
+
+CONDITIONAL RENDERING
+=====================
+
+import React, { Component } from 'react'
+
+class UserGreeting extends Component {
+    constructor(props) {
+      super(props)
+    
+      this.state = {
+         isLoggedIn: false
+      }
+    }
+    
+  render() {
+    
+    //first way
+    //using if else condition
+    //if(this.state.isLoggedIn){
+       // return <div>Welcome madhu</div>
+    //}else{
+        //return <div>Welcome Guest</div>
+    //}
+
+    //second way
+    //using variable
+    //let message
+    //if(this.state.isLoggedIn){
+      //  message = <div>Welcome madhu</div>
+    //}else{
+      //  message = <div>Welcome Guest</div>
+    //}
+    //return <div>{message}</div>
+
+    //third way
+    //mostly used
+    //ternary operator
+    //return this.state.isLoggedIn?(<div>Welcome madhu</div>):(<div>Welcome Guest</div>)
+
+    //fourth way
+    //only true condition rendering
+    //short circuit operator
+    return this.state.isLoggedIn && <div>Welcome madhu</div>
+
+  }
+}
+
+export default UserGreeting
+
+LIST RENDERING
+==============
+within single component
+-----------------------
+import React from 'react'
+
+function NamesList() {
+//first & second & third
+//const name = ['madhu','praneeth','srinivas']
+const persons = [
+    {name: 'madhu', age: '29', lang: 'Java'},
+    {name: 'praneeth', age: '30', lang: 'SB'},
+    {name: 'srinivas', age: '27', lang: 'React'},
+]
+
+//third way
+//const namesList = names.map(name => <h2>{name}</h2>)
+
+//fourth way
+const personsList = persons.map(person => 
+    <div><h2>Iam {person.name}, my age is  {person.age} , I know  {person.lang}</h2> </div>
+)
+
+  return (
+    <div>
+    {/** Normal Rendering
+      <h4>{names[0]}</h4>
+      <h5>{names[1]}</h5>
+      <h6>{names[2]}</h6>
+       */}
+
+       {/**second way
+     {
+        names.map(name => <h2>{name}</h2>)
+       }
+    */}
+      
+    {/*third way*/}
+    {/*{namesList}*/}
+
+{/*fourth way*/}
+{ personsList }
+
+
+    </div>
+  )
+}
+
+export default NamesList
+
+within morethan a component
+---------------------------
+import React from 'react'
+function Person({ person }) {
+    return (
+        <div>
+            <h2>Iam {person.name}, my age is  {person.age} , I know  {person.lang}</h2>
+        </div>
+    )
+}
+export default Person
+
+import React from 'react'
+import Person from './Person'
+function NamesList() {
+    const persons = [
+        { name: 'madhu', age: '29', lang: 'Java' },
+        { name: 'praneeth', age: '30', lang: 'SB' },
+        { name: 'srinivas', age: '27', lang: 'React' },
+    ]
+    const personsList = persons.map(person =>
+        <Person person={person} />
+    )
+    return (
+        <div>{personsList}</div>
+    )
+}
+export default NamesList
+
+LIST AND KEYS
+=============
+=> A 'key' is a special string attribute you need to include when creating lists of elements.
+=> Keys give the elements a stable identity.
+=> Keys help React identify which items have changed, are added, or are removed.
+=> Help in efficient update of the user interface.
+
+if your list have unique values
+-------------------------------
+ const personsList = persons.map(person =>
+        <Person key={person.name} person={person} />
+    )
+
+if your list have not any key values
+-------------------------------------
+ const personsList = persons.map((person, index) =>
+        <Person key={index} person={person} />
+    )
+
+When to use index as key?
+-------------------------
+1. The items in your list do not have a unique id.
+2. The list is a static list and will not change.
+3. The list will never be ordered or filtered.
+
+
+STYLING AND CSS
+===============
+1. CSS Stylesheets
+2. Inline styling
+3. CSS Module
+4. CSS in JS Libraries
+
+1. CSS Stylesheets
+-------------------
+/*first and second*/
+.primary{
+    color: orange;
+}
+.font-xl{
+    font-size: 72px;
+}
+
+import React from 'react'
+import './myStyle.css'
+function Stylesheet(props) {
+    let className = props.primary ? 'primary' : ''
+    return (
+        <div>
+            {/**first way */}
+            {/**<h1 className='primary'>My Style in react</h1> */}
+
+            {/**second way */}
+            <h1 className={`${className} font-xl`}>My Style in react</h1>
+        </div>
+    )
+}
+export default Stylesheet
+
+import './App.css';
+import Stylesheet from './components/Stylesheet';
+function App() {
+  return (
+    <div className="App">
+      {/**first way */}
+      {/**<Stylesheet/> */}
+
+      {/**second way */}
+      {/**true means styles applies other wise not */}
+      <Stylesheet primary={true} />
+
+    </div>
+  );
+}
+export default App;
+
+
+2. Inline styling
+-----------------
+import './App.css'; 
+import Inline from './components/Inline';
+function App() {
+  return (
+    <div className="App">
+      <Inline/>
+    </div>
+  );
+}
+export default App;
+
+
 
 
 
