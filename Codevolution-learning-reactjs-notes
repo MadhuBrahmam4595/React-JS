@@ -1,0 +1,240 @@
+=> requirements node js, editor(visual studio)
+
+=> create react project
+	a. # npx create-react-app <project name>
+	b. # npm install create-react-app -g
+	c. # create-react-app <project-name>
+
+What is npx -> npm package runner.
+
+=> to run react project
+	# npm start
+
+=> index.html file is the only file your going to have in your react js project. In this file we have a div with id 'root' for rendering complete project.
+=> if you run 'npm start' command in terminal index.html page will serve you.
+
+Components
+==========
+=> Components descrive a part of the user interface.
+=> They are reusable and can be nested inside other components.
+
+Types:
+  1. Stateless Functional Components
+      a. Javascript Functions
+          Ex: function Welcome(props){ return <h1>Hello, {props.name}</h1>; }
+  2. Stateful Components
+      a. Class extending component class
+      b. Render method returning HTML
+          Ex: class Welcome extends React.Component{ render(){ return <h1>Hello, {this.props.name}</h1>; } }
+
+Functional Components
+======================
+Example
+-------
+normal
+  import React from 'react'
+  function Greet() { return ( <div> fgsdfgsdfgsdfg </div> ) }
+  export default Greet
+
+with arrow function 
+  const Greet = () => <h1>asdfasfasdf</h1> export default Greet
+
+Class components
+================
+import React, {Component} from 'react'
+class Welcome extends Component{
+  render(){ return <h1> Class component </h1> }  
+}
+export default Welcome
+
+Function components vs Class components
+=======================================
+Fucntional
+----------
+1. Simple functions
+2. Use Func components as much as possible
+3. Absence of 'this' keyword
+4. Solution without using state
+5. Mainly responsible for the UI
+6. Stateless/ Dumb / Presentational
+
+Class
+-----
+1. More feature rich
+2. Maintain their own private data - state
+3. Complex UI logic
+4. Provide lifecycle hooks
+5. Stateful / Smart / Container
+
+Hooks
+=====
+=> No breaking changes
+=> Completely opt-in & 100% backwards-compatible.
+=> What ever we've learned so far in this series still holds good
+=> Components types - Functional components and Class components
+=> Using state, lifecycle methods and 'this' bonding
+=> After understanding state, event binding and lifecycle hooks in class components
+
+JSX
+===
+1. Javascript XML(JSX) - Extension to the JavaScript language syntax.
+2. Write XML - like code for elements and components
+3. JSX tags have a tag name, attributes and children
+4. JSX is not a necessity to write React applications
+5. JSX makes your react code simpler and elegant
+6. JSX ultimately transpiles to pure JavaScript which is understood by the browsers
+
+react component with jsx
+------------------------
+Greet.js
+--------
+import React from 'react'
+const Greet = () => {
+    return React.createElement(
+        'div',
+        {id: 'hello', className: 'dummyClass'},
+        React.createElement('h1', null, 'Hello Vishwas')
+    )
+}
+
+export default Greet
+
+JSX differences
+---------------
+class - className
+for - htmlFor
+camelCase property naming convension
+  onclick - onClick
+  tabindex - tabIndex
+
+PRoPERTIES (Props)
+==================
+=> Props are immutable (value cannot be changed once assigned).
+Example: 
+import './App.css';
+import Greet from './components/Greet';
+function App() {
+  return (
+    <div className="App">
+       <Greet name="madhu" project="iti"/>
+       <Greet name="praneeth" project="dca"/>
+       <Greet name="srinivas" project="apbocwwb"/>
+       
+    </div>
+  );
+}
+import React from 'react'
+const Greet = props => {
+    return <h1> Hello {props.name}, working on project {props.project}</h1>
+}
+export default Greet
+
+STATE
+=====
+props vs state
+--------------
+Props
+  a. props get passed to the component
+  b. Function parameters
+  c. props are immutable
+  d. props - Functional Components, this.props - Class Components
+State
+  a. state is managed within the component
+  b. Variables declared in the function body
+  c. state can be changed
+  d. useState Hook - Functional Components, this.state - Class Components
+
+Example:
+import React, { Component } from "react";
+class Message extends Component{
+constructor(){
+    super()
+    this.state = {
+        message: 'Welcome Visitor'
+    }
+}
+changeMessage(){
+    this.setState({
+        message: 'Thanks for subscribe'
+    })
+}
+    render(){
+        return (
+            <div>
+            <h1>{this.state.message}</h1>
+            <button onClick={()=>this.changeMessage()}>Subscribe</button>
+            </div>
+        )
+    }
+}
+export default Message
+
+setState
+********
+1. Always make use of setState and never modify the state directly
+2. Code has to be executed after the state has been updated? 
+    Place that code in the call back function which is the second argument to the setState method
+3. When you have to update state based on the previous state value, pass in a function as an argument
+    instead of the regular object.
+
+import React, { Component } from 'react'
+
+export class Counter extends Component {
+
+    constructor(props) {
+      super(props)
+    
+      this.state = {
+         count: 0
+      }
+    }
+    
+    increment(){
+        //this.setState({
+       //     count: this.state.count + 1
+       // },()=> console.log('last value is', this.state.count))
+       this.setState(prevState => ({
+        count: prevState.count + 1
+       }))
+    }
+    incrementFive(){
+        this.increment()
+        this.increment()
+        this.increment()
+        this.increment() 
+    }
+
+  render() {
+    return (
+      <div>
+        count - {this.state.count}
+        <button onClick={()=> this.incrementFive()}>Increment</button>
+      </div>
+    )
+  }
+}
+
+export default Counter
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
