@@ -216,7 +216,48 @@ export class Counter extends Component {
 
 export default Counter
 
-    
+destructuring props and state
+*****************************
+import React from 'react'
+//const Greet = ({name,project}) => {
+    const Greet = props =>{
+       const{name, project} = props
+    return <h1> Hello {name}, working on project {project}</h1>
+}
+export default Greet
+
+EVENT HANDLING
+==============
+onClick
+-------
+functional component
+--------------------
+import React from 'react'
+function ClickFunction() {
+    function clickhander(){
+        alert("clicked");
+    }
+  return (<div><button onClick={clickhander}>Click</button></div>)}
+export default ClickFunction
+
+class component
+----------------
+import React, { Component } from 'react'
+class ClassClick extends Component {
+    classclickhandler(){
+        alert('clicked');
+    }
+  render() {
+    return (
+      <div>
+        <button onClick={this.classclickhandler}>Click</button>
+      </div>
+    )
+  }
+}
+export default ClassClick
+
+  
 
 
 
