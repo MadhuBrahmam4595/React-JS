@@ -961,10 +961,161 @@ const FRInput = React.forwardRef((props, ref)=>{
 
 export default FRInput
 
+PORTALS
+=======
+import React from 'react'
+import ReactDOM from 'react-dom'
+
+function PortalsDemo() {
+  return ReactDOM.createPortal(
+    <h1>
+    PortalsDemo
+    </h1>,
+    document.getElementById('portal-root')
+  )
+}
+
+export default PortalsDemo
+
+public/index.html
+<body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+    <div id="portal-root"></div>
 
 
+ERROR BOUNDARY (or) ERROR HANDLING METHODS
+==========================================
+Error Boundary
+	=> A class component that implements either one or both of the life cycle methods 
+	getDerivedStateFromError or componentDidCatch becomes an error boundary.
+	=> The static method getDerivedStateFromError method is used to render a fallback UI after the error is thrown and 
+	the componentDidCatch method is used to log the error information.
+
+import React from 'react'
+
+function Hero({heroName}) {
+    if(heroName === 'Joker'){
+        throw new Error('Not a hero')
+    }
+  return (
+    <div>
+      {heroName}
+    </div>
+  )
+}
+
+export default Hero
+
+import React, { Component } from 'react'
+
+class ErrorBoundary extends Component {
+
+    constructor(props) {
+      super(props)
+    
+      this.state = {
+         hasError: false
+      }
+    }
+    
+
+static getDerivedStateFromError(error){
+   return{
+    hasError: true
+   } 
+}
+
+componentDidCatch(error, info){
+    console.log(error)
+    console.log(info)
+}
+
+  render() {  
+    if(this.state.hasError){
+        return <h1>Something went wrong</h1>
+    }else{
+        return this.props.children
+    }
+  }
+}
+
+export default ErrorBoundary
+
+Summary
+-------
+=> Error boundaries are React components that catch Javascript error in their child component tree, log those errors and display a fall-back UI.
+=> A class component becomes an Error Boundary by defining either or both of getDerivedStateFromError and componentDidCatch lifecycle methods.
+=> The placement of the error boundary also matters as it controls if the entire app should have the fallback UI or just the component
+	causing the problem.
+=> Provide a way to gracefully handle error in application code.
+
+HIGHER ORDER COMPONENTS
+=======================
+
+import React, { Component } from 'react'
+
+class ClickCounter extends Component {
+
+constructor(props) {
+  super(props)
+
+  this.state = {
+     count: 0
+  }
+}
+
+incrementHandler = ()=>{
+    this.setState(prevState=>{
+        return {count: prevState.count + 1}
+    })
+}
+
+  render() {
+      const {count} = this.state
+        return <button onClick={this.incrementHandler}>Click {count} times</button>   
+  }
+}
+
+export default ClickCounter
 
 
+import React, { Component } from 'react'
+
+class HoverCount extends Component {
+    constructor(props) {
+      super(props)
+    
+      this.state = {
+         count: 0
+      }
+    }
+
+    incrementHover=()=>{
+        this.setState(prevState=>{
+            return {count: prevState.count + 1}
+        })
+    }
+    
+  render() {
+     const {count} = this.state
+        return <h2 onMouseOver={this.incrementHover}>Hover count {count}</h2>
+       
+  }
+}
+
+export default HoverCount
+
+
+Why Higher Order components?
+=> To share common functionality between components
+
+Higher Order Components - HOC
+-----------------------------
+=> A pattern where a function takes a component as an argument and returns a new component.
+=> const newComponent = higherOrderComponent(originalComponent)
+=> const enhanceComponent = higherOrderComponent(originalComponent)
+=> Ex: const ironMan = withSuit(TonyStark)
 
 
 
