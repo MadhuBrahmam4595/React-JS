@@ -754,7 +754,33 @@ export default LifeCycleA
 
 FRAGMENTS
 =========
+import React from 'react'
+import Column from './Column'
+function Table() {
+  return (
+    <div>
+        <table>
+            <tbody>
+                <tr>
+                    <Column/>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+  )
+}
+export default Table
 
+import React from 'react'
+function Column() {
+  return (
+    <React.Fragment> 
+        <td>SNO</td>
+        <td>NAME</td>
+    </React.Fragment>
+  )
+}
+export default Column
 
 
 
