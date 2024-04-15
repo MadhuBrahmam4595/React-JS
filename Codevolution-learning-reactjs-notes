@@ -782,7 +782,184 @@ function Column() {
 }
 export default Column
 
+PURE COMPONENTS
+===============
+Pure component
+	=> A Pure component implements shouldComponentUpdate with a shallow prop and state comparison.
+	=> SC of prevState with currentState & SC of prevProps with currentProps difference Re-render component.
+Regular component
+	=> A regular component does not implement the shouldComponentUpdate method. It always returns true by default.
+Pure component
+	=> A pure component on the other hand implements shouldComponentUpdate with a shallow props and state comparison
 
+Shallow Comparison (SC)
+-----------------------
+Primitive types:
+	a (SC) b return true. if a and b have the same value and are of the same type.
+	Example: String 'madhu' (SC) String 'madhu' returns true
+Complex Type:
+	a (SC) b returns true. if a and b reference the exact same object.
+	Example 1:
+	var a = [1,2,3];
+	var b = [1,2,3];
+	var c = a;
+	var ab_eq = (a == b); //false
+	var ac_eq = (a == c); //true
+
+	Example 2:
+	var a = { x: 1, y: 2};
+	var b = { x: 1, y: 2};
+	var c = a;
+	var ab_eq = (a == b); //false
+	var ac_eq = (a == c); //true
+
+SUMMARY
+-------
+=> We can create a component by extending the PureComponent class.
+=> A Pure component implements the shouldComponentUpdate lifecycle method by performing a shallow comparison on the props and state of the component.
+=> If there is no difference, the component is not re-rendered (performance boost)
+=> It's a good idea to ensure that all the children components are also pure to avoid unexpected behaviour.
+=> Never mutate the state. Always return a new object that reflects the new state.
+
+MEMO
+====
+import React from 'react'
+
+function MemoComp({name}) {
+    console.log('memo component')
+  return (
+    <div>
+      {name}
+    </div>
+  )
+}
+
+export default React.memo(MemoComp)
+
+REFs
+====
+import React, { Component } from 'react'
+
+class RefsDemo extends Component {
+    constructor(props) {
+        super(props)
+        this.inputRef = React.createRef()
+      }
+  
+      componentDidMount(){
+        this.inputRef.current.focus()
+          console.log('RefsDemo componentDidMount')
+      }
+
+      clickHandler = () =>{
+        alert(this.inputRef.current.value)
+      }
+  render() {
+    return (
+      <div>
+        <input type='text' ref={this.inputRef} />
+        <button onClick={this.clickHandler}>Click</button>
+      </div>
+    )
+  }
+}
+
+export default RefsDemo
+
+REFs WITH CLASS COMPONENTS
+==========================
+import React, { Component } from 'react'
+import Input from './Input'
+
+class FocusInput extends Component {
+    constructor(props) {
+      super(props)
+      this.componentRef = React.createRef()
+    }
+
+    clickHandler = () =>{
+        this.componentRef.current.focusInput()
+    }
+    
+  render() {
+    return (
+      <div>
+      <Input ref={this.componentRef}/>
+        <button onClick={this.clickHandler}>Focus component</button>
+      </div>
+    )
+  }
+}
+
+export default FocusInput
+
+import React, { Component } from 'react'
+
+export class Input extends Component {
+    constructor(props) {
+      super(props)
+      this.inputRef = React.createRef()
+    }
+    focusInput(){
+        this.inputRef.current.focus()
+    }
+  render() {
+    return (
+      <div>
+        <input type='text' ref={this.inputRef} />
+      </div>
+    )
+  }
+}
+
+export default Input
+
+FORWARDING REFs
+===============
+import React, { Component } from 'react'
+import FRInput from './FRInput'
+
+class FRParentInput extends Component {
+    constructor(props) {
+      super(props)
+      this.inputRef = React.createRef()
+    }
+
+    clickHandler = () =>{
+        this.inputRef.current.focus()
+    }
+    
+  render() {
+    return (
+      <div>
+        <FRInput ref={this.inputRef} />
+        <button onClick={clickHandler}>Focus Input</button>
+      </div>
+    )
+  }
+}
+
+export default FRParentInput
+
+import React from 'react'
+
+//function FRInput() {
+  //return (
+    //<div>
+      //<input type='text' />
+    //</div>
+  //)
+//}
+
+const FRInput = React.forwardRef((props, ref)=>{
+    return(
+        <div>
+            <input type='text' ref={ref} />
+        </div>
+    )
+})
+
+export default FRInput
 
 
 
