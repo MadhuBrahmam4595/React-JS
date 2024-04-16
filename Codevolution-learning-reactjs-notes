@@ -1682,6 +1682,32 @@ function HookCounterOne() {
 
 export default HookCounterOne
 
+Run effects only once
+---------------------
+import React, { useEffect, useState } from 'react'
+
+function HookCountTwo() {
+    const [x, setX] = useState('')
+    const [y, setY] = useState('')
+
+    useEffect(()=>{
+        console.log('useEffect')
+        window.addEventListener('mousemove', logMousePosition)
+    },[])
+    const logMousePosition = e => {
+        setX(e.clientX)
+        setY(e.clientY)
+    }
+
+  return (
+    <div>
+    X - {x}, Y - {y}  
+    </div>
+  )
+}
+
+export default HookCountTwo
+
 
 
 
