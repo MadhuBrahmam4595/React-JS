@@ -1708,6 +1708,187 @@ function HookCountTwo() {
 
 export default HookCountTwo
 
+useEffect with cleanup
+----------------------
+useEffect with incorrect dependency
+------------------------------------
+with class components
+---------------------
+import React, { Component } from 'react'
+
+class IntervalClassCounter extends Component {
+
+constructor(props) {
+  super(props)
+
+  this.state = {
+     count: 0
+  }
+}
+componentDidMount(){
+    this.interval = setInterval(this.tick, 1000)
+}
+componentWillUnmount(){
+    clearInterval(this.interval)
+}
+tick = () => {
+    this.setState({
+        count: this.state.count + 1
+    })
+}
+
+
+  render() {
+    return (
+      <div>
+        <h1>{this.state.count}</h1>
+      </div>
+    )
+  }
+}
+
+export default IntervalClassCounter
+
+with useEffect and hooks
+------------------------
+import React, { useEffect, useState } from 'react'
+
+function IntervalHookCounter() {
+    const [count, setCount] = useState(0)
+    
+    const tick = () => {
+        setCount(count + 1)
+    }
+    useEffect(()=>{
+        const interval = setInterval(tick, 1000)
+        return ()=>{
+            clearInterval(interval)
+        }
+    },[count])
+  return (
+    <div>
+      {count}
+    </div>
+  )
+}
+
+export default IntervalHookCounter 
+
+another way
+
+import React, { useEffect, useState } from 'react'
+
+function IntervalHookCounter() {
+    const [count, setCount] = useState(0)
+    
+    const tick = () => {
+        setCount(prevCount => prevCount + 1)
+    }
+    useEffect(()=>{
+        const interval = setInterval(tick, 1000)
+        return ()=>{
+            clearInterval(interval)
+        }
+    },[])
+  return (
+    <div>
+      {count}
+    </div>
+  )
+}
+
+export default IntervalHookCounter 
+
+Fetching data with useEffect Part1
+===================================
+import React, { useEffect, useState } from 'react'
+import axios from 'axios'
+
+function DataFetchinguseEffect() {
+    const [data, setData] = useState([])
+
+    useEffect(()=>{
+        axios.get('https://jsonplaceholder.typicode.com/posts')
+        .then(response =>{
+          setData(response.data)
+        }).catch(error=>{
+          console.log(error)
+        })
+    },[])
+  return (
+    <div>
+    <ul>
+      {
+        data.map(post=> <li key={post.id}>{post.title}</li>)
+      }
+      </ul>
+    </div>
+  )
+}
+
+export default DataFetchinguseEffect
+
+
+Fetching data with useEffect Part2
+===================================
+import React, { useEffect, useState } from 'react'
+import axios from 'axios'
+
+function DataFetchinguseEffect() {
+    const [post, setPost] = useState({})
+    const [id, setId] = useState(1)
+
+    useEffect(()=>{
+        axios.get(`https://jsonplaceholder.typicode.com/posts/${id}`)
+        .then(response =>{
+          setPost(response.data)
+        }).catch(error=>{
+          console.log(error)
+        })
+    },[id])
+  return (
+    <div>
+    <input type='text' value={id} onChange={e=> setId(e.target.value)} /><br></br>
+     {post.title}
+    </div>
+  )
+}
+
+export default DataFetchinguseEffect
+
+Fetching data with useEffect Part3
+===================================
+import React, { useEffect, useState } from 'react'
+import axios from 'axios'
+
+function DataFetchinguseEffect() {
+    const [post, setPost] = useState({})
+    const [id, setId] = useState(1)
+    const [idFromButton, setIdFromButton] = useState(1)
+
+    const handleClick = () =>{
+      setIdFromButton(id)
+    }
+
+    useEffect(()=>{
+        axios.get(`https://jsonplaceholder.typicode.com/posts/${idFromButton}`)
+        .then(response =>{
+          setPost(response.data)
+        }).catch(error=>{
+          console.log(error)
+        })
+    },[idFromButton])
+  return (
+    <div>
+    <input type='text' value={id} onChange={e=> setId(e.target.value)} /><br></br>
+    <button onClick={handleClick}>Get Post</button>
+     <div>{post.title}</div>
+    </div>
+  )
+}
+
+export default DataFetchinguseEffect
+
 
 
 
