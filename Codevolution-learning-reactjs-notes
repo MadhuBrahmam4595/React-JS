@@ -2009,6 +2009,235 @@ useReducer Hook
 reduce vs useReducer
 ====================
 reduce in Javascript
+array.reduce(reducer, initialValue)
+sigleValue = reducer(accumulator, itemValue)
+reduce method returns a single value
+
+useReducer in React
+useReducer(reducer,initialState)
+newState=reducer(currentState, action)
+useReducer returns a pair of values. [newState, dispatch]
+
+useReducer (Simple state & action)
+==================================
+import React, { useReducer, useState } from 'react'
+
+const initialState = 0
+const reducer = (state, action) => {
+    switch(action){
+        case 'increment' : return state + 1
+        case 'decrement' : return state - 1
+        case 'reset' : return initialState
+        default : return state
+    }
+}
+
+function CounterOne() {
+
+const [count, dispatch] = useReducer(reducer, initialState)
+
+  return (
+    <div>
+        CounterOne<br></br>
+        <div>
+            <div>{count}</div>
+            <button onClick={()=>dispatch('decrement')}>Decrement</button>
+            <button onClick={()=>dispatch('reset')}>Reset</button>
+            <button onClick={()=>dispatch('increment')}>Increment</button>        </div>
+    </div>
+  )
+}
+
+export default CounterOne
+
+import React, { useReducer } from 'react'
+
+const initialState = {
+    firstCounter: 0
+}
+const reducer = (state, action) => {
+    switch(action.type){
+        case 'increment' : return {firstCounter: state.firstCounter + action.value}
+        case 'decrement' : return {firstCounter: state.firstCounter - action.value}
+        case 'reset' : return initialState
+        default : return state
+    }
+}
+
+function CounterTwo() {
+
+const [count, dispatch] = useReducer(reducer, initialState)
+
+  return (
+    <div>
+        CounterOne<br></br>
+        <div>
+            <div>count - {count.firstCounter}</div>
+            <button onClick={()=>dispatch({type: 'decrement', value: 1})}>Decrement</button>
+            <button onClick={()=>dispatch({type: 'decrement', value: 5})}>Decrement 5</button>
+            <button onClick={()=>dispatch({type:'reset'})}>Reset</button>
+            <button onClick={()=>dispatch({type:'increment', value: 1})}>Increment</button> 
+            <button onClick={()=>dispatch({type:'increment', value: 5})}>Increment 5</button>
+                   </div>
+    </div>
+  )
+}
+
+export default CounterTwo
+
+import React, { useReducer } from 'react'
+
+const initialState = {
+    firstCounter: 0, secondCounter: 10
+}
+const reducer = (state, action) => {
+    switch(action.type){
+        case 'increment' : return {...state, firstCounter: state.firstCounter + action.value}
+        case 'decrement' : return {...state, firstCounter: state.firstCounter - action.value}
+        case 'increment2' : return {...state, secondCounter: state.secondCounter + action.value}
+        case 'decrement2' : return {...state, secondCounter: state.secondCounter - action.value}
+        case 'reset' : return initialState
+        default : return state
+    }
+}
+
+function CounterTwo() {
+
+const [count, dispatch] = useReducer(reducer, initialState)
+
+  return (
+    <div>
+        CounterOne<br></br>
+        <div>
+            <div>count - {count.firstCounter}</div>
+            <div>count2 - {count.secondCounter}</div>
+            <button onClick={()=>dispatch({type: 'decrement', value: 1})}>Decrement</button>
+            <button onClick={()=>dispatch({type: 'decrement2', value: 1})}>Decrement 5</button>
+            <button onClick={()=>dispatch({type:'reset'})}>Reset</button>
+            <button onClick={()=>dispatch({type:'increment2', value: 1})}>Increment</button> 
+            <button onClick={()=>dispatch({type:'increment', value: 1})}>Increment 5</button>
+                   </div>
+    </div>
+  )
+}
+
+export default CounterTwo
+
+Multiple useReducers
+====================
+import React, { useReducer, useState } from 'react'
+
+const initialState = 0
+const reducer = (state, action) => {
+    switch(action){
+        case 'increment' : return state + 1
+        case 'decrement' : return state - 1
+        case 'reset' : return initialState
+        default : return state
+    }
+}
+
+function CountThree() {
+
+const [count, dispatch] = useReducer(reducer, initialState)
+const[countTwo, dispatchTwo] = useReducer(reducer, initialState)
+
+  return (
+    <div>
+        
+        <div>
+            <div>count - {count}</div>
+            <button onClick={()=>dispatch('decrement')}>Decrement</button>
+            <button onClick={()=>dispatch('reset')}>Reset</button>
+            <button onClick={()=>dispatch('increment')}>Increment</button>        
+        </div>
+        <div>
+            <div>count two - {countTwo}</div>
+            <button onClick={()=>dispatchTwo('decrement')}>Decrement</button>
+            <button onClick={()=>dispatchTwo('reset')}>Reset</button>
+            <button onClick={()=>dispatchTwo('increment')}>Increment</button>        
+        </div>
+    </div>
+  )
+}
+
+export default CountThree
+
+useReducer with useContext
+===========================
+useReducer - Local State Management
+Share state between component - Global state management
+useReducer + useContext
+
+import './App.css';   
+import React, { useReducer } from 'react';
+import ComponentA from './components/ComponentA';
+import ComponentB from './components/ComponentB';
+  
+const initialState = 0
+const reducer = (state, action) => {
+    switch(action){
+        case 'increment' : return state + 1
+        case 'decrement' : return state - 1
+        case 'reset' : return initialState
+        default : return state
+    }
+}
+
+export const CountContext = React.createContext()
+
+function App() {
+  const [count, dispatch] = useReducer(reducer, initialState)
+  return (
+    <CountContext.Provider value={{countState: count, countDispatch: dispatch}}>
+    <div className="App">
+      <div>Count - {count}</div>
+      <ComponentA />
+      <ComponentB />
+    </div>
+    </CountContext.Provider>
+  );
+}
+
+export default App;
+
+import React, { useContext } from 'react'
+import { CountContext } from '../App'
+
+function ComponentA() {
+
+const countContext = useContext(CountContext)
+
+  return (
+    <div>ComponentA - {countContext.countState}
+
+            <button onClick={()=>countContext.countDispatch('decrement')}>Decrement</button>
+            <button onClick={()=>countContext.countDispatch('reset')}>Reset</button>
+            <button onClick={()=>countContext.countDispatch('increment')}>Increment</button> 
+    </div>
+  )
+}
+
+export default ComponentA
+
+import React, { useContext } from 'react'
+import { CountContext } from '../App'
+
+function ComponentB() {
+
+const countContext = useContext(CountContext)
+
+  return (
+    <div>ComponentB - {countContext.countState}
+
+            <button onClick={()=>countContext.countDispatch('decrement')}>Decrement</button>
+            <button onClick={()=>countContext.countDispatch('reset')}>Reset</button>
+            <button onClick={()=>countContext.countDispatch('increment')}>Increment</button> 
+    </div>
+  )
+}
+
+export default ComponentB
 
 
 
