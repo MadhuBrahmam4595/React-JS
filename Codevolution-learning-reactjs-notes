@@ -2239,6 +2239,96 @@ const countContext = useContext(CountContext)
 
 export default ComponentB
 
+Fetching data with useReducer Part 1
+====================================
+import axios from 'axios'
+import React, { useEffect, useState } from 'react'
+
+function DataFetchingOne() {
+
+const [loading, setLoading] = useState(true)
+const [error, setError] = useState('')
+const [post, setPost] = useState({})
+
+useEffect(()=>{
+    axios.get('https://jsonplaceholder.typicode.com/posts/1')
+    .then(response=>{
+        setLoading(false)
+        setError('')
+        setPost(response.data)
+    })
+    .catch(error=>{
+        setLoading(false)
+        setError('something went wrong')
+        setPost({})
+    })
+},[])
+
+  return (
+    <div>
+        DataFetchingOne <br></br>
+        { loading ? 'Loading' : post.title }
+        { error ? error : null }
+    </div>
+  )
+}
+
+export default DataFetchingOne
+
+Fetching data with useReducer Part 2
+====================================
+import React, { useReducer, useEffect } from 'react'
+import axios from 'axios'
+
+const initialState = {
+    loading: true,
+    error: '',
+    post: {}
+}
+
+const reducer = (state, action) => {
+    switch(action.type){
+        case 'FETCH_SUCCESS':
+            return{
+                loading: false,
+                post: action.payload,
+                error: ''
+            }
+        case 'FETCH_ERROR':
+            return{
+                loading: false,
+                post: {},
+                error: 'something went wrong'
+            }
+        default:
+            return state
+    }
+}
+
+function DataFetchingTwo() {
+    const [state, dispatch] = useReducer(reducer, initialState)
+
+    useEffect(()=>{
+        axios.get('https://jsonplaceholder.typicode.com/posts/1')
+        .then(response=>{
+             dispatch({type: 'FETCH_SUCCESS', payload: response.data})
+        })
+        .catch(error=>{
+            dispatch({type: 'FETCH_ERROR'}) 
+        })
+    },[])
+
+  return (
+    <div>DataFetchingTwo
+
+{ state.loading ? 'Loading' : state.post.title }
+        { state.error ? state.error : null }
+    </div>
+  )
+}
+
+export default DataFetchingTwo
+
 
 
 
