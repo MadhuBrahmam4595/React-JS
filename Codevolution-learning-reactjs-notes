@@ -2601,7 +2601,179 @@ export default HookTimer
 
 Custom Hooks
 ============
+=> A custom hook is basically a Javascript function whose name starts with 'use'.
+=> A custom hook can also call other hooks if needed.
+=> Why? Share logic - Alternative to HOCs and Render Props
 
+useDocumentTitle Custom Hook
+============================
+import React,{useEffect} from 'react'
+
+function useDocTitle(count) {
+    useEffect(()=>{
+        document.title = `Count ${count}`
+    },[count])
+}
+
+export default useDocTitle
+
+import React, {  useState } from 'react'
+import useDocTitle from '../hooks/useDocTitle'
+
+function DocTitleOne() {
+    const [count, setCount] = useState(0)
+
+useDocTitle(count)
+
+  return (
+    <div>
+      <button onClick={()=> setCount(count+1)}>Count - {count}</button>
+    </div>
+  )
+}
+
+export default DocTitleOne
+
+import React, {  useState } from 'react'
+import useDocTitle from '../hooks/useDocTitle'
+
+function DocTitleTwo() {
+    const [count, setCount] = useState(0)
+ 
+useDocTitle(count)
+
+  return (
+    <div>
+      <button onClick={()=> setCount(count+1)}>Count - {count}</button>
+    </div>
+  )
+}
+
+export default DocTitleTwo
+
+useCounter Custom Hook
+======================
+import React, { useState } from 'react'
+import useCounter from '../hooks/useCounter'
+
+function CounterTwo() {
+    const [number, increment, decrement,reset] = useCounter()
+
+  return (
+    <div>
+      <h2>Count - {number}</h2><br></br>
+      <button onClick={decrement}>Decrement</button> 
+      <button onClick={reset}>Reset</button> 
+      <button onClick={increment}>Increment</button> 
+    </div>
+  )
+}
+
+export default CounterTwo
+
+import React, { useState } from 'react'
+import useCounter from '../hooks/useCounter'
+
+function CounterOne() {
+    const [number, increment, decrement,reset] = useCounter()
+
+  return (
+    <div>
+      <h2>Count - {number}</h2><br></br>
+      <button onClick={decrement}>Decrement</button> 
+      <button onClick={reset}>Reset</button> 
+      <button onClick={increment}>Increment</button> 
+    </div>
+  )
+}
+
+export default CounterOne
+
+import React,{useState} from 'react'
+
+function useCounter() {
+    const [number, setNumber] = useState(0)
+
+    const increment = () =>{
+        setNumber(prevNumber=> prevNumber + 1)
+    }
+    const decrement = () =>{
+        setNumber(prevNumber=>prevNumber-1)
+    }
+    const reset = () =>{
+        setNumber(0)
+    }
+    return [number, increment, decrement,reset]
+}
+
+export default useCounter
+
+userInput Custom Hook
+=====================
+import React, { useState } from 'react'
+
+function useInput(initialValue) {
+  const [value, setValue] = useState(initialValue)
+const reset = () => {
+    setValue(initialValue)
+}
+const bind = {
+    value, 
+    onchange: e => {
+        setValue(e.target.value)
+    }
+}
+return [value, bind, reset]
+}
+
+export default useInput
+
+import React from 'react'
+import useInput from '../hooks/useInput';
+
+function UserForm() {
+
+    const [firstname, bindFirstname, resetFirstname] = useInput('')
+    const [lastname, bindLastname, resetLastname] = useInput('')
+
+const submitHandler = e => {
+    e.preventDefault();
+    alert(`${firstname}, ${lastname}`)
+    resetFirstname()
+    resetLastname()
+}
+
+  return (
+    <div>
+      <form onSubmit={submitHandler}>
+      <div>
+      <label>First Name:</label><input type='text' {...bindFirstname} />
+      </div>
+      <div>
+      <label>Last Name:</label><input type='text' {...bindLastname} />
+      </div>
+      <input type='submit' />
+      </form>
+    </div>
+  )
+}
+
+export default UserForm
+
+React Render
+============
+
+Rendering in React
+******************
+=> React rendering has two phases Render Phase and Commit Phase.
+Render Phase:
+	1. Find all elements flagged for update.
+	2. For each flagged component, converts JSX to React element and store the result.
+	3. Performs reconciliation - Diff old and new tree of React elements also known as Virtual DOM.
+	4. Hand over the changes to the next phase.
+Commit Phase:
+	1. Apply changes to the DOM.
+=> The commit phase is usually very fast, but rendering can be slow.
 
 
 
