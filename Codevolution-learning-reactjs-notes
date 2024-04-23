@@ -2456,7 +2456,151 @@ function Count() {
 export default React.memo(Count)
 
 
+import React, {useMemo, useState} from 'react'
 
+
+function Count() {
+
+   const [counterOne, setCounterOne] = useState(0)
+   const [counterTwo, setCounterTwo] = useState(0)
+
+   const incremntOne = () => {
+    setCounterOne(counterOne + 1)
+   }
+   const incremntTwo = () => {
+    setCounterTwo(counterTwo + 1)
+   }
+   const isEven =  useMemo(()=>{
+    let i = 0
+    while(i<200000000) i++
+    return counterOne % 2 == 0
+   }, [counterOne])
+   
+     
+  return (
+    <div>
+        
+        <div>
+          <button onClick={incremntOne}>Counter one - {counterOne}</button> 
+          <span>{isEven ? 'Even' : 'Odd'}</span>
+        </div>
+        <div>
+          <button onClick={incremntTwo}>Counter one - {counterTwo}</button>
+        </div>
+        
+        </div>
+  )
+}
+
+export default React.memo(Count)
+
+useRef Hook
+===========
+import React, { useEffect, useRef } from 'react'
+
+function UseEffectPartOne() {
+
+const inputRef = useRef(null)
+
+useEffect(()=>{
+    inputRef.current.focus()
+})
+
+  return (
+    <div>
+      <input ref={inputRef} />
+    </div>
+  )
+}
+
+export default UseEffectPartOne
+
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+
+class ClassTimer extends Component {
+    interval
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            timer: 0
+        }
+    }
+ 
+    componentDidMount() {
+        this.interval = setInterval(()=>{
+            this.setState(prevState=>({timer: prevState.timer+1}))
+        }, 1000)
+    }
+ 
+    componentWillUnmount() {
+        clearInterval(this.interval)
+    }
+
+    render() {
+        return (
+            <div>
+                Class Timer - {this.state.timer}<br></br>
+                <button onClick={()=>clearInterval(this.interval)}>Clear</button>
+            </div>
+        );
+    }
+}
+ 
+
+export default ClassTimer;
+
+import React, { useEffect,useState } from 'react'
+
+function HookTimer() {
+    const [timer, setTimer] = useState(0)
+
+    useEffect(()=>{
+        const interval = setInterval(()=>{
+            setTimer(prevTimer => prevTimer + 1)
+        }, 1000)
+        return ()=>{
+            clearInterval(interval)
+        };
+    },[])
+  
+    return (
+      <div>
+        HookTimer - {timer}
+      </div>
+    )
+  
+}
+export default HookTimer
+
+import React, { useEffect,useRef,useState } from 'react'
+
+function HookTimer() {
+    const [timer, setTimer] = useState(0)
+    const intervalRef = useRef()
+
+    useEffect(()=>{
+        intervalRef.current = setInterval(()=>{
+            setTimer(prevTimer => prevTimer + 1)
+        }, 1000)
+        return ()=>{
+            clearInterval(intervalRef.current)
+        };
+    },[])
+  
+    return (
+      <div>
+        HookTimer - {timer}
+        <button onClick={()=>clearInterval(intervalRef.current)}>Clear</button>
+      </div>
+    )
+  
+}
+export default HookTimer
+
+Custom Hooks
+============
 
 
 
