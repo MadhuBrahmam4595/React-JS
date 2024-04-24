@@ -2867,6 +2867,262 @@ const ArrayStateUser = () => {
 
 export default ArrayStateUser
 
+React Rendering - Parent and Child
+**********************************
+=> New state is different from the old state.
+=> New state is same as the old state.
+	a. Right after the initial render.
+	b. After re-renders
+=> Button click -> Parent component re-renders -> Child component re-renders
+=> DOM represented by child component is never updated.
+=> Child component went through the render phase but not the commit phase.
+=> "Unnecessary render"
+=> "Unnecessary render" does affect the perforamance.
+
+import React, { useState } from 'react'
+import Child from './Child'
+
+const Parent = () => {
+    const [count, setCount]=useState(0)
+    console.log('Parent rendering')
+  return (
+    <div>
+    Parent components
+    <button onClick={()=>setCount(count+1)}>Count - {count}</button>
+    <button onClick={()=>setCount(0)}>Count to 0</button>
+    <button onClick={()=>setCount(5)}>Count to 5</button>
+    <Child />
+    </div>
+  )
+}
+
+export default Parent
+
+import React from 'react'
+
+const Child = () => {
+    console.log('Child renedering')
+  return (
+    <div>
+      Child components
+    </div>
+  )
+}
+
+export default Child
+
+summary
+-------
+=> When a parent component renders, React will recursively render all of its child components
+=> New state name as old state after initial render? Both parent and child do not re-render
+=> New state same as old state after re-renders? Parents re-renders one more time but child never re-renders.
+
+Same Element Reference
+**********************
+=> A component can re-render if it calls a setter function or a dispatch function
+=> A component can render if its parent component rendered.
+
+=> Component can change its stae but not props
+=> React automatically provides the optimization
+=> React looks at OptParentOne component
+=> Convert button and children prop
+=> Re-render is caused by a state change in OptParentOne
+=> Component has no means of directly changing the props
+=> Children props couldn't have changed
+=> Make use of the react element that was previously created
+=> Children props has to be referencing the same element from the previous render, will skip the render phase for the ChildOne Component.
+
+import React, { useState } from 'react' 
+
+const ParentOne = ({childOne}) => {
+    const [count, setCount]=useState(0)
+    console.log('ParentOne rendering')
+  return (
+    <div>
+    Parent components
+    <button onClick={()=>setCount(count+1)}>Count - {count}</button>
+    {childOne}
+    </div>
+  )
+}
+
+export default ParentOne
+
+import React from 'react'
+
+const ChildOne = () => {
+    console.log('child component')
+  return (
+    <div>
+      child components
+    </div>
+  )
+}
+
+export default ChildOne
+
+import React, { useState } from 'react'
+import ParentOne from './ParentOne'
+import ChildOne from './ChildOne'
+
+const GrandParent = () => {
+    const [newCount, setNewCount] = useState(0)
+    console.log('grand rendering')
+  return (
+    <div>
+      <button onClick={()=>setNewCount((nc)=> nc+1)}>Grand count - {newCount}</button>
+      GrandParent new count -{newCount}
+
+      <ParentOne newCount={newCount}>
+        <ChildOne />
+      </ParentOne>
+    </div>
+  )
+}
+
+export default GrandParent
+
+import React from 'react';
+import './App.css';     
+import './components/NormaCss.css'          
+import GrandParent from './components/GrandParent';
+ 
+
+function App() {
+  return (
+    <div className="App">
+ 
+       
+      <GrandParent/>
+     
+    </div>
+  );
+}
+
+export default App;
+
+=> In React, when a parent component renders, React will recursively render all of its child components
+=> "Unnecessary renders" where the child component goes through the render phase but not the commit phase.
+=> You extract the expensive child component and instead pass it down as props to the parent component
+=> Whenever there is a re-render caused by a change in the state of the parent component, React will optimize the re-render for you by knowing 
+	that the props has to be referencing the same element before and after the render
+
+React memo
+==========
+=> In React, when a parent component renders, a child component might un-necessarily render.
+=> To optimize this behaviour, you can use React.demo and pass in the child component.
+=> React.memo will perform a shallow comparison of the previous and new props and re-render the child component only if the props have changed.
+
+import React, { useState } from 'react'  
+import { MemorizedChildTwo } from './ChildTwo'
+
+const ParentTwo = ({childOne}) => {
+    const [count, setCount]=useState(0)
+    const [name, setName] = useState('madhu')
+    console.log('ParentOne rendering')
+  return (
+    <div>
+    Parent components
+    <button onClick={()=>setCount(count+1)}>Count - {count}</button>
+    <button onClick={()=>setName('brahmam')}>change name</button>
+    <MemorizedChildTwo name={name} />
+    </div>
+  )
+}
+
+export default ParentTwo
+
+import React from 'react'
+
+const ChildTwo = () => {
+    console.log('child component')
+  return (
+    <div>
+      child components
+    </div>
+  )
+}
+
+export const MemorizedChildTwo = React.memo(ChildTwo)
+
+Questions on Optimization
+*************************
+1. When do i use the same element reference technique and when do i use React.demo?
+ans:
+Same Element Reference:
+	=> When your parent component re-renders because of state change in the parent component
+	=> This technique does not work if the parent component re-renders because of changes in its props
+	=> state change? -yes
+	=> props change> -no
+React.memo
+	=> When your child component is being asked to re-render due to changes in the Parent's state which do not
+	affect the child component props in anyway
+
+2. If React.memo provides the optimization by comparing the props, why not wrap every single component with React.memo?
+	Why doesn't react just internally memorize every component and not expose React.memo to the developers?
+ans:
+Shallow comparison aren't free. They're O(prop count). And they only buy something if it bails out.
+All comparisons where we end up re-rendering are wasted. Why would you expect always comparing to be faster?
+Considering many components always get different props.
+
+React.memo and hypothetical time 
+-------------------------------
+Component render time 	- 10ms
+React.memo time 	- 2ms
+----------------------------------------
+First re-render - No props change 	- 2ms
+Second re-render - props change		- 2ms + 10ms = 12ms
+
+Component render history
+------------------------
+Initial render - 10ms
+Optimized render - 2ms
+Re-render - 12ms
+Re-render - 12ms
+Re-render - 12ms
+........
+
+*** When you optimize the rendering of one component, React will also skip rendering that component's entire subtree because
+it's effectively stopping the default 'render children recursively' behaviour of react.
+
+Incorrect memo with children
+****************************
+import React, { useState } from 'react'  
+import { MemorizedChildTwo } from './ChildTwo'
+
+const ParentTwo = ({childOne}) => {
+    const [count, setCount]=useState(0)
+    const [name, setName] = useState('madhu')
+    console.log('ParentOne rendering')
+  return (
+    <div>
+    Parent components
+    <button onClick={()=>setCount(count+1)}>Count - {count}</button>
+    <button onClick={()=>setName('brahmam')}>change name</button>
+    <MemorizedChildTwo name={name} >
+        <strong>Hello</strong>
+    </MemorizedChildTwo>
+    </div>
+  )
+}
+
+export default ParentTwo
+
+import React from 'react'
+
+const ChildTwo = ({children, name}) => {
+    console.log('child component')
+  return (
+    <div>
+      child components {children}-{name}
+    </div>
+  )
+}
+
+export const MemorizedChildTwo = React.memo(ChildTwo)
+
+Incorrect memo with Impure Component
+=====================================
 
 
 
