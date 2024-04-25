@@ -3129,6 +3129,146 @@ Incorrect memo with Impure Component
 		REACT TYPESCRIPT
 ======================================================================
 
+Typing Props
+************
+import './App.css';
+import { Greet } from './components/Greet';
+
+function App() {
+  return (
+    <div className="App">
+       <Greet name='madhu' />
+    </div>
+  );
+}
+
+export default App;
+
+type GreetProps={
+    name: string
+}
+
+export const Greet = (props: GreetProps) =>{
+    return(
+        <div>
+            <h2>{props.name} Greetings from greet</h2>
+        </div>
+    )
+}
+
+Basic Props
+***********
+import './App.css';
+import { Greet } from './components/Greet';
+import { Person } from './components/Person';
+import { PersonList } from './components/PersonList';
+
+function App() {
+
+const personname = {
+  fname: 'madhu',
+  lname: 'brahmam'
+
+}
+
+const nameList = [
+  { first: 'Bruce', last: 'wayne'},
+  { first: 'Rohit', last: 'Sharma'},
+  { first: 'Virat', last: 'Kohli'}]
+
+  return (
+    <div className="App">
+       <Greet name='madhu' count={10} isLoggedIn={true}/>
+       <Person name={personname} />
+       <PersonList names={nameList} />
+    </div>
+  );
+}
+
+export default App;
+
+type PersonListProps = {
+    names:{
+        first: string
+        last: string
+    }[]
+}
+
+export const PersonList = (props: PersonListProps) => {
+    return(
+        <div>
+            {props.names.map(name=>{
+                return (<div>{name.first}, {name.last}</div>)
+            })}
+        </div>
+    )
+}
+
+Advance Props
+*************
+import './App.css'; 
+import { Greet } from './components/Greet';
+import { Heading } from './components/Heading';
+import { Oscar } from './components/Oscar';
+import { Status } from './components/Status';
+
+function App() {
+
+  return (
+    <div className="App">
+        <Status status='error'/>
+        <Oscar>
+          <Heading>hello from HEADING</Heading>
+        </Oscar>
+
+        <Greet name='madhu'   isLoggedIn={true} />
+        
+    </div>
+  );
+}
+
+export default App;
+
+import React from "react"
+
+type oscarProps = {
+    children : React.ReactNode
+}
+
+export const Oscar = (props: oscarProps) => {
+    return(
+        <div>{props.children}</div>
+    )
+}
+type headingProps = {
+    children : string
+}
+
+export const Heading = (props: headingProps) => {
+    return(
+        <div>
+            {props.children}
+        </div>
+    )
+}
+type GreetProps={
+    name: string
+    count?: number
+    isLoggedIn: boolean
+}
+
+export const Greet = (props: GreetProps) =>{
+    const {count = 0} = props
+    return(
+        <div>
+            <h2>
+            {
+                props.isLoggedIn ? `Welcome ${props.name}! You have ${count} unread messages`:'Welcome guest'
+            }
+            </h2>
+        </div>
+    )
+}
 
 
 
