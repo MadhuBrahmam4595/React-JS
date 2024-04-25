@@ -3270,6 +3270,8 @@ export const Greet = (props: GreetProps) =>{
     )
 }
 
+EVERNT PROPS
+============
 
 
 
